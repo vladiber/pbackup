@@ -1,0 +1,45 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: 7572735f-8d69-4cff-9416-302ce0274958
+#     name: HR Users can see HR data based on country
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: f85448e1-77eb-4e00-9ef3-1937271c3b6c
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: HR Users
+#     id: 5b420b68-d771-4adc-b333-aa265e29430b
+dynamic_group(identity) if {
+	identity.template == "Main"
+	identity["Role"] == "hr"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: HR Categories
+#     id: b2bcbdcd-d210-4d4e-841b-1962a1a471c5
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "categories"
+	asset["Classification"] == "hr"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: user country
+#     id: 6556d49b-2afb-4808-ada0-4842ec327e86
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "docs"
+	identity.template == "Main"
+	asset["country"] == identity["country"]
+}
