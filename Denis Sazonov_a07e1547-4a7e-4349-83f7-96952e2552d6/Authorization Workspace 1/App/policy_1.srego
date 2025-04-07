@@ -1,0 +1,47 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: 3cae70f0-0c3f-41fb-8d4d-34733cfed0c6
+#     name: regotest
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: App
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: dg1
+#     id: 2b967d43-2f8b-450c-acac-06866f3bed3b
+#     description: "fasdfasd"
+dynamic_group(identity) if {
+	identity.template == "User"
+	identity["attr1"] == "val1"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: dg1
+#     id: 2b967d43-2f8b-450c-acac-06866f3bed3b
+#     description: "fasdfasd"
+dynamic_group(identity) if {
+	identity.template == "User"
+	identity["attr2"] == "val2"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: portal
+#     id: ece336da-bc5c-4626-80dc-f70824133c70
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "Test"
+	asset["att2"] == "portal"
+	action.id in ["view"]
+}

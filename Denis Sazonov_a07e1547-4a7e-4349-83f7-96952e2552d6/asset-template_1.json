@@ -1,0 +1,1 @@
+{"data":{"templateId":"kuku","displayName":"kuku","source":"REQUEST","isUsedForFiltering":false,"attributes":[{"attributeId":"path","displayName":"Asset ID","type":"STRING","isAvailableForPolicies":false,"nameForRequest":"path","isCalculated":false}],"actions":[]}}

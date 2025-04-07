@@ -1,0 +1,46 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: AAAAA
+#     name: AAAAA
+#     description: "AAAAA"
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: App
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: User All Users
+#     id: bc870dc1-80b4-4db2-9e34-934d97fa9478
+#     description: "Predefined Dynamic Group. All Users contains all organization's users defined in the IDP"
+dynamic_group(identity) if {
+	identity.template == "User"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: All
+#     id: 44b23bad-be33-43c0-9791-2eac8c4759d0
+#     description: "Predefined Ruleset. All Assets contains all created assets defined in the Asset Type"
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "Claims"
+	action.id in ["Access"]
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Condition Request
+#     name: test condition 2
+#     id: 5dea995d-151c-41df-82de-54dc96135d0c
+#     description: "test condition 2"
+condition_request(requestParams, identity) if {
+	not requestParams["string1"] in ["111"]
+}
