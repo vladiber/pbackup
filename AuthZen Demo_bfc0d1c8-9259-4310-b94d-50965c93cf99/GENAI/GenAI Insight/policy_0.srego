@@ -1,0 +1,33 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: dd5998c8-4568-494e-8a39-ae1d8697575a
+#     name: Sales users can see business data
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: f85448e1-77eb-4e00-9ef3-1937271c3b6c
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: Sales
+#     id: 4e27605b-61ec-4f03-8ce2-d81b6a891c9f
+dynamic_group(identity) if {
+	identity.template == "Main"
+	identity["Role"] == "sales"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: Business Categories
+#     id: a6b29301-6c56-4f2d-971b-1aee1ebc1f11
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "categories"
+	asset["Classification"] == "business"
+}
