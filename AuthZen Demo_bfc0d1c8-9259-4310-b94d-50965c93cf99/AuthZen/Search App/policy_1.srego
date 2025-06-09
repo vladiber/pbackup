@@ -1,0 +1,35 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: 61f7c180-bc5c-443f-812d-19bbf1895d86
+#     name: a user can view any record in their department
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: Search-App
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: AutZen_Search All Users
+#     id: 71decfee-97ea-42e9-a938-256ac5024eed
+#     description: "Predefined Dynamic Group. All Users contains all organization's users defined in the IDP"
+dynamic_group(identity) if {
+	identity.template == "AutZen_Search"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: Same department
+#     id: 1b709b45-0eb2-483e-846f-76441ff3f1b5
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "record"
+	identity.template == "AutZen_Search"
+	asset["Department"] == identity["Department"]
+	action.id in ["view"]
+}

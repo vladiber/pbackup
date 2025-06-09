@@ -1,0 +1,58 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: f61b99d6-89b2-4bc0-9ce3-57278873be90
+#     name: Create Todo
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: API-GW
+#       - id: 63e2e8d6-440d-4803-8fdc-19e5a911ead1
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: Admin
+#     id: 6ac9c8d3-dacb-48ac-889b-3a4987a2ce1e
+dynamic_group(identity) if {
+	identity.template == "AuthZen"
+	identity["Role"] == "admin"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: Editor
+#     id: 06775f57-4a4d-4ba3-8da1-aec03c718896
+dynamic_group(identity) if {
+	identity.template == "AuthZen"
+	identity["Role"] == "editor"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: todos
+#     id: 6c06d4ce-599b-4cf6-bde6-0259ee5b35cd
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "route"
+	startswith(asset["path"], "/todos")
+	action.id in ["POST"]
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: All
+#     id: 55c3f957-61b5-4146-bd1f-5273158fee4c
+#     description: "Predefined Ruleset. All Assets contains all created assets defined in the Asset Type"
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "todo"
+	action.id in ["can_create_todo"]
+}

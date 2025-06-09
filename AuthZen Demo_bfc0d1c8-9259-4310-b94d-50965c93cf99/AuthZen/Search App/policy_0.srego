@@ -1,0 +1,47 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: f9eb6637-53a4-4065-a82e-4c3ae852af9d
+#     name: a manager can view any record or edit in department
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: Search-App
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: A_Manager
+#     id: 32005e95-b623-4f72-8eb5-e6656d2391ce
+dynamic_group(identity) if {
+	identity.template == "AutZen_Search"
+	identity["Role"] == "manager"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: All
+#     id: b7bd573b-9ab6-4c57-9e58-1c2d0ea6a622
+#     description: "Predefined Ruleset. All Assets contains all created assets defined in the Asset Type"
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "record"
+	action.id in ["view"]
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: Same department
+#     id: 1b709b45-0eb2-483e-846f-76441ff3f1b5
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "record"
+	identity.template == "AutZen_Search"
+	asset["Department"] == identity["Department"]
+	action.id in ["edit"]
+}

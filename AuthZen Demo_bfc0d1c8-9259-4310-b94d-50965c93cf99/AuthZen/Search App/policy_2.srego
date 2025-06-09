@@ -1,0 +1,35 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: 2eb3aa7f-1d37-4c7d-816f-e2b9940da865
+#     name: a user can view / edit / delete any record they own
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: Search-App
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: AutZen_Search All Users
+#     id: 71decfee-97ea-42e9-a938-256ac5024eed
+#     description: "Predefined Dynamic Group. All Users contains all organization's users defined in the IDP"
+dynamic_group(identity) if {
+	identity.template == "AutZen_Search"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: Record Owner
+#     id: 88c7e168-2cfa-4589-bbd9-fd17167f484b
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "record"
+	identity.template == "AutZen_Search"
+	asset["Owner"] == identity["uid"]
+	action.id in ["delete","edit","view"]
+}

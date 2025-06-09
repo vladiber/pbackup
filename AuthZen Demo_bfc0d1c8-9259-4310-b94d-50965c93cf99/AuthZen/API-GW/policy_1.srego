@@ -1,0 +1,47 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: f6384c07-6d58-444f-87bf-89dfbce174ed
+#     name: All Users can read todos
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: 63e2e8d6-440d-4803-8fdc-19e5a911ead1
+#       - id: API-GW
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: AuthZen All Users
+#     id: 66975e7b-171d-4030-ba99-f9049e117f1b
+#     description: "Predefined Dynamic Group. All Users contains all organization's users defined in the IDP"
+dynamic_group(identity) if {
+	identity.template == "AuthZen"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: todos
+#     id: 6c06d4ce-599b-4cf6-bde6-0259ee5b35cd
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "route"
+	startswith(asset["path"], "/todos")
+	action.id in ["GET"]
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: All
+#     id: 55c3f957-61b5-4146-bd1f-5273158fee4c
+#     description: "Predefined Ruleset. All Assets contains all created assets defined in the Asset Type"
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "todo"
+	action.id in ["GET","can_read_todos"]
+}

@@ -1,0 +1,36 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: 1d246f42-797a-4143-8534-6fe270b3c3e7
+#     name: Bypass Rule
+#     description: "kuku"
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: API-GW
+#       - id: 63e2e8d6-440d-4803-8fdc-19e5a911ead1
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: AuthZen All Users
+#     id: 66975e7b-171d-4030-ba99-f9049e117f1b
+#     description: "Predefined Dynamic Group. All Users contains all organization's users defined in the IDP"
+dynamic_group(identity) if {
+	identity.template == "AuthZen"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: bypass
+#     id: 7f976002-e3a3-4222-a31f-a5c8b2712a7e
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "route"
+	startswith(asset["path"], "/pdps")
+	action.id in ["GET"]
+}

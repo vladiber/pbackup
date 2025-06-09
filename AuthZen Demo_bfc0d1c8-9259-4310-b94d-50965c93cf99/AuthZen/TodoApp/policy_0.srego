@@ -1,0 +1,48 @@
+# METADATA
+# custom:
+#   plainid:
+#     policyId: ffc47556-9bd1-4303-8ce1-0b41383b2952
+#     name: Editors can update their todos
+#     accessType: Allow
+#     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
+#     applications: 
+#       - id: API-GW
+#       - id: 63e2e8d6-440d-4803-8fdc-19e5a911ead1
+package policy
+import rego.v1
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: DynamicGroup
+#     name: Editor
+#     id: 06775f57-4a4d-4ba3-8da1-aec03c718896
+dynamic_group(identity) if {
+	identity.template == "AuthZen"
+	identity["Role"] == "editor"
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: todos
+#     id: 6c06d4ce-599b-4cf6-bde6-0259ee5b35cd
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "route"
+	startswith(asset["path"], "/todos")
+	action.id in ["POST","PUT"]
+}
+
+# METADATA
+# custom:
+#   plainid:
+#     kind: Ruleset
+#     name: owner
+#     id: bc74d6d7-0af2-4bed-945b-15e813c3c3a8
+ruleset(asset, identity, requestParams, action) if {
+	asset.template == "todo"
+	identity.template == "AuthZen"
+	asset["ownerid"] == identity["email"]
+	action.id in ["can_update_todo"]
+}
