@@ -3,6 +3,7 @@
 #   plainid:
 #     policyId: f61b99d6-89b2-4bc0-9ce3-57278873be90
 #     name: Create Todo
+#     description: "kuku"
 #     accessType: Allow
 #     policyUse: DYNAMIC_AUTHORIZATION_SERVICE
 #     applications: 
